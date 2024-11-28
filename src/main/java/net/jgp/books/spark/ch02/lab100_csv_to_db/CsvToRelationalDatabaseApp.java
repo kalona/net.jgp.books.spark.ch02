@@ -1,14 +1,17 @@
 package net.jgp.books.spark.ch02.lab100_csv_to_db;
 
-import static org.apache.spark.sql.functions.concat;
-import static org.apache.spark.sql.functions.lit;
-
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.spark.sql.functions.*;
 
 /**
  * CSV to a relational database.
@@ -17,10 +20,12 @@ import org.apache.spark.sql.SparkSession;
  */
 public class CsvToRelationalDatabaseApp {
 
-  /**
+  private static final Logger log = LoggerFactory.getLogger(CsvToRelationalDatabaseApp.class);
+
+    /**
    * main() is your entry point to the application.
-   * 
-   * @param args
+   *
+   * @param args Command line arguments
    */
   public static void main(String[] args) {
     CsvToRelationalDatabaseApp app = new CsvToRelationalDatabaseApp();
@@ -32,7 +37,7 @@ public class CsvToRelationalDatabaseApp {
    */
   private void start() {
     // Creates a session on a local master
-    SparkSession spark = SparkSession.builder()
+      var spark = SparkSession.builder()
         .appName("CSV to DB")
         .master("local")
         .getOrCreate();
@@ -42,6 +47,7 @@ public class CsvToRelationalDatabaseApp {
 
     // Reads a CSV file with header, called authors.csv, stores it in a
     // dataframe
+
     Dataset<Row> df = spark.read()
         .format("csv")
         .option("header", "true")
@@ -52,6 +58,7 @@ public class CsvToRelationalDatabaseApp {
 
     // Creates a new column called "name" as the concatenation of lname, a
     // virtual column containing ", " and the fname column
+
     df = df.withColumn(
         "name",
         concat(df.col("lname"), lit(", "), df.col("fname")));
@@ -62,19 +69,30 @@ public class CsvToRelationalDatabaseApp {
     // The connection URL, assuming your PostgreSQL instance runs locally on
     // the
     // default port, and the database we use is "spark_labs"
-    String dbConnectionUrl = "jdbc:postgresql://localhost/spark_labs";
 
     // Properties to connect to the database, the JDBC driver is part of our
     // pom.xml
+
+    //    Properties file example:
+    //    url=jdbc:postgresql://
+    //    user=postgres
+    //    password=postgres
+    //    driver=org.postgresql.Driver
+
     Properties prop = new Properties();
-    prop.setProperty("driver", "org.postgresql.Driver");
-    prop.setProperty("user", "jgp");
-    prop.setProperty("password", "Spark<3Java");
+    try (FileInputStream input = new FileInputStream("src/main/resources/db.properties")) {
+      prop.load(input);
+
+
+    } catch (IOException e) {
+      log.error("Error loading properties file", e);
+    }
+
 
     // Write in a table called ch02
     df.write()
         .mode(SaveMode.Overwrite)
-        .jdbc(dbConnectionUrl, "ch02", prop);
+        .jdbc(prop.getProperty("url"), "etl.ch02", prop);
 
     System.out.println("Process complete");
   }

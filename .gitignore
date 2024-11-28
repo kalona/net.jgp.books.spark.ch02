@@ -32,3 +32,4 @@ target/*
 project/target/*
 project/project/*
 /spark_labs/
+/src/main/resources/db.properties

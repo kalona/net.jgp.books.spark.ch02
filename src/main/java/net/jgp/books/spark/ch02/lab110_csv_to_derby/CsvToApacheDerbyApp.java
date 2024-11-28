@@ -7,10 +7,10 @@ import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+//import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Properties;
 
 import org.apache.derby.drda.NetworkServerControl;
@@ -29,12 +29,12 @@ import net.jgp.books.spark.ch02.x.utils.PrettyFormatter;
 public class CsvToApacheDerbyApp {
 
   private static final String JDBC_DRIVER =
-      "org.apache.derby.jdbc.ClientDriver";;
+      "org.apache.derby.jdbc.ClientDriver";
 
   /**
    * main() is your entry point to the application.
    *
-   * @param args
+   * @param args the command line arguments
    */
   public static void main(String[] args) {
     CsvToApacheDerbyApp app = new CsvToApacheDerbyApp();
@@ -44,13 +44,13 @@ public class CsvToApacheDerbyApp {
     String dbHost = "localhost";
     int dbPort = 1527;
     String dbConnectionUrl =
-        "jdbc:derby://" + dbHost + ":" + dbPort + "/spark_labs;create=true";
+            "jdbc:derby://" + dbHost + ":" + dbPort + "/spark_labs;create=true";
 
     try {
       app.startDatabase(dbHost, dbPort);
     } catch (Exception e) {
       System.out.println(
-          "Could not initiate database, stopping: " + e.getMessage());
+              "Could not initiate database, stopping: " + e.getMessage());
       return;
     }
     app.start(dbConnectionUrl, user, password);
@@ -114,14 +114,13 @@ public class CsvToApacheDerbyApp {
   }
 
   /**
-   * Tests the database output...
-   * 
-   * @param dbUrl
-   * @param dbUser
-   * @param dbPassword
+   * Tests the database output.
+   *
+   * @param dbUrl      the database URL
+   * @param dbUser     the database user
+   * @param dbPassword the database password
    */
-  private void testDatabase(String dbUrl, String dbUser,
-      String dbPassword) {
+  private void testDatabase(String dbUrl, String dbUser, String dbPassword) {
     Connection conn = null;
     Statement stmt = null;
     try {
@@ -154,7 +153,7 @@ public class CsvToApacheDerbyApp {
         if (stmt != null) {
           stmt.close();
         }
-      } catch (SQLException se2) {
+      } catch (SQLException ignored) {
       } // nothing we can do
       try {
         if (conn != null) {
@@ -165,18 +164,17 @@ public class CsvToApacheDerbyApp {
       } // end finally try
     } // end try
     System.out.println("Test Database Complete");
-  }// end TestDatabase
+  } // end TestDatabase
 
   /**
-   * Prints the results from the resultset
-   * 
-   * @param rs
-   * @throws SQLException
+   * Prints the results from the result set.
+   *
+   * @param rs the result set to print
+   * @throws SQLException if a database access error occurs
    */
   private void printResults(ResultSet rs) throws SQLException {
     PrettyFormatter pf = new PrettyFormatter();
     pf.set(rs);
     pf.show();
-
   }
 }
