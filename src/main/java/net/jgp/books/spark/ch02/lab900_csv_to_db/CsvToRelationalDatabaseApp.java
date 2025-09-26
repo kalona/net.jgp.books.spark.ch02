@@ -19,7 +19,7 @@ public class CsvToRelationalDatabaseApp {
   /**
    * main() is your entry point to the application.
    * 
-   * @param args
+   * @param args command line arguments.
    */
   public static void main(String[] args) {
     CsvToRelationalDatabaseApp app = new CsvToRelationalDatabaseApp();

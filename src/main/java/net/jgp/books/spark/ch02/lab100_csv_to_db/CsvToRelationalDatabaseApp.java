@@ -87,13 +87,17 @@ public class CsvToRelationalDatabaseApp {
     } catch (IOException e) {
       log.error("Error loading properties file", e);
     }
-
+//      // Print all properties loaded from the file
+//      for (String key : prop.stringPropertyNames()) {
+//          System.out.println(key + "=" + prop.getProperty(key));
+//      }
 
     // Write in a table called ch02
     df.write()
         .mode(SaveMode.Overwrite)
-        .jdbc(prop.getProperty("url"), "etl.ch02", prop);
+        .jdbc(prop.getProperty("url"), "spark.ch02", prop);
 
     System.out.println("Process complete");
+    spark.stop();
   }
 }
